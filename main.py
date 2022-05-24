@@ -67,4 +67,8 @@ class PasswordCheck:
         return self._password_ok
 
 
-# print(PasswordCheck("weakpassw$ord1M").password_ok)
+
+
+if __name__ == "__main__":
+    PasswordCheck("example$Password")
+    
