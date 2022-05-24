@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import re
-# Insert a banner
+import fire
 
 
 class PasswordCheck:
@@ -17,7 +17,7 @@ class PasswordCheck:
     Cudos to the author of original function https://stackoverflow.com/a/32542964/11103492 
     """
 
-    def __init__(self, password: str) -> object:
+    def __init__(self, password) :
         self._password = password
 
         # calculating the length
@@ -68,9 +68,13 @@ class PasswordCheck:
     def password_ok(self):
         return self._password_ok
 
+    def __str__(self):
+        return str(self._password_ok)
+
 
 
 
 if __name__ == "__main__":
-    PasswordCheck("example$Password")
+    # print(PasswordCheck("example$2Password").password_ok)
+    fire.Fire(PasswordCheck)
     
