@@ -1,6 +1,6 @@
 # Password Checker
 
-![CircleCI](https://img.shields.io/circleci/build/github/magzim21/password-checker/main?style=for-the-badge&label=apply&logo=terraform)  
+![CircleCI](https://img.shields.io/circleci/build/github/magzim21/password-checker/main?style=for-the-badge&label=apply&logo=python)  
 
 
 
