@@ -3,7 +3,9 @@
 import re
 import fire
 import logging
+import yaml
 
+CONFIG_FILE = 'config.yaml'
 LOGGING_FORMAT = '%(pathname)s:%(lineno)d %(levelname)s - %(message)s'
 RED = '\033[0;31m' # Red color for terminal
 GREEN = '\033[0;32m' # Green color for terminal
@@ -12,48 +14,55 @@ NC = '\033[0m'  # No Color
 class PasswordCheck:
     """
     Verify the strength of 'password'
-    Returns a dict indicating the wrong criteria
-    A password is considered strong if:
-        8 characters length or more
-        1 digit or more
-        1 symbol or more
-        1 uppercase letter or more
-        1 lowercase letter or more
+    Returns a bool indicating whether password is secure
     Cudos to the author of original function https://stackoverflow.com/a/32542964/11103492 
+    Attributes:
+    ----------
+    req_length : int
+        minimum acceptible password length
+    req_digits : int
+        minumum digits required for password 
+    req_uppercase : int
+        minumum digits uppercase symbols for password 
+    req_lowercase : int
+        minumum digits lowercase symbols for password 
+    req_symbols : int
+        minumum digits special symbols for password 
     """
 
-    def __init__(self, password) :
+    def __init__(self, password: str, req_length=8, req_digits=1, req_uppercase=1, req_lowercase=1, req_symbols=1) -> object:
         self._password = str(password)
 
         # calculating the length
-        self._length_error = len(self._password) < 8
+        self._length_error = len(self._password) < req_length
         logger.debug(
             f'{self._length_error } Password has required length check is {GREEN+"OK"+NC if not self._length_error else RED+"PROBLEM"+NC}')
 
         # searching for digits
-        self._digit_error = re.search(r"\d", self._password) is None
+        self._digit_error = len(re.findall(r"\d", self._password)) < req_digits
         logger.debug(
             f'Password contains required number of digits is {GREEN+"OK"+NC if not self._digit_error else RED+"PROBLEM"+NC}')
 
         # searching for uppercase
-        self._uppercase_error = re.search(r"[A-Z]", self._password) is None
+        self._uppercase_error = len(re.findall(r"[A-Z]", self._password)) < req_uppercase
         logger.debug(
             f'Password contains required number of uppercase symbols is {GREEN+"OK"+NC if not self._uppercase_error else RED+"PROBLEM"+NC}')
         
         # searching for lowercase
-        self._lowercase_error = re.search(r"[a-z]", self._password) is None
+        self._lowercase_error = len(re.findall(r"[a-z]", self._password)) < req_lowercase
         logger.debug(
             f'Password contains required number of lowercase symbols is {GREEN+"OK"+NC if not self._lowercase_error else RED+"PROBLEM"+NC}')
 
         # searching for symbols
-        self._symbol_error = re.search(
-            r"[ !#$%&'()*+,-./[\\\]^_`{|}~"+r'"]', self._password) is None
+        self._symbol_error = len(re.findall(r"[ !#$%&'()*+,-./[\\\]^_`{|}~\"r']", self._password)) < req_symbols
         logger.debug(
             f'Password contains required number of special symbols is {GREEN+"OK"+NC if not self._symbol_error else RED+"PROBLEM"+NC}')
 
         # overall result
         self._password_ok = not (
             self._length_error or self._digit_error or self._uppercase_error or self._lowercase_error or self._symbol_error)
+        logger.debug(
+            f'{GREEN+"This password is strong enougth."+NC if not self._symbol_error else RED+"This password is weak."+NC}')
 
     @property
     def password(self):
@@ -85,13 +94,34 @@ class PasswordCheck:
 
     def __str__(self):
         return str(self._password_ok)
+    def test(self):
+        return "ok"
 
 
 
 
 if __name__ == "__main__":
-    logging.basicConfig(format=LOGGING_FORMAT, level=logging.DEBUG)
+    logging.basicConfig(format=LOGGING_FORMAT, level=logging.ERROR)
     logger = logging.getLogger()
     
-    fire.Fire(PasswordCheck)
+    
+    try:
+        with open(CONFIG_FILE, "r") as stream:
+            try:
+                config = yaml.safe_load(stream)
+            except yaml.YAMLError as e:
+                logger.error('Can not parse yaml')
+                logger.debug(e)
+    except FileNotFoundError as e:
+        logger.error(f'File {CONFIG_FILE} not found.')
+        logger.debug(e)
+    except OSError as e:
+        logger.error(e)
+    else:
+        logger.setLevel("DEBUG" if config.setdefault("verbose", False) else "ERROR")
+        logger.debug('Debugging output enabled')
+    finally:
+        fire.Fire(PasswordCheck)
+    
+        
     
