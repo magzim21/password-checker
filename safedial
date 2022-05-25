@@ -2,7 +2,12 @@
 
 import re
 import fire
+import logging
 
+LOGGING_FORMAT = '%(pathname)s:%(lineno)d %(levelname)s - %(message)s'
+RED = '\033[0;31m' # Red color for terminal
+GREEN = '\033[0;32m' # Green color for terminal
+NC = '\033[0m'  # No Color
 
 class PasswordCheck:
     """
@@ -22,19 +27,29 @@ class PasswordCheck:
 
         # calculating the length
         self._length_error = len(self._password) < 8
+        logger.debug(
+            f'{self._length_error } Password has required length check is {GREEN+"OK"+NC if not self._length_error else RED+"PROBLEM"+NC}')
 
         # searching for digits
         self._digit_error = re.search(r"\d", self._password) is None
+        logger.debug(
+            f'Password contains required number of digits is {GREEN+"OK"+NC if not self._digit_error else RED+"PROBLEM"+NC}')
 
         # searching for uppercase
         self._uppercase_error = re.search(r"[A-Z]", self._password) is None
-
+        logger.debug(
+            f'Password contains required number of uppercase symbols is {GREEN+"OK"+NC if not self._uppercase_error else RED+"PROBLEM"+NC}')
+        
         # searching for lowercase
         self._lowercase_error = re.search(r"[a-z]", self._password) is None
+        logger.debug(
+            f'Password contains required number of lowercase symbols is {GREEN+"OK"+NC if not self._lowercase_error else RED+"PROBLEM"+NC}')
 
         # searching for symbols
         self._symbol_error = re.search(
             r"[ !#$%&'()*+,-./[\\\]^_`{|}~"+r'"]', self._password) is None
+        logger.debug(
+            f'Password contains required number of special symbols is {GREEN+"OK"+NC if not self._symbol_error else RED+"PROBLEM"+NC}')
 
         # overall result
         self._password_ok = not (
@@ -75,6 +90,8 @@ class PasswordCheck:
 
 
 if __name__ == "__main__":
-    # print(PasswordCheck("example$2Password").password_ok)
+    logging.basicConfig(format=LOGGING_FORMAT, level=logging.DEBUG)
+    logger = logging.getLogger()
+    
     fire.Fire(PasswordCheck)
     
