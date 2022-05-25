@@ -1,6 +1,6 @@
 # Password Checker
 
-![CircleCI](https://img.shields.io/circleci/build/github/magzim21/password-checker/main?style=for-the-badge&label=apply&logo=python)  
+![CircleCI](https://img.shields.io/circleci/build/github/magzim21/safedial/main?style=for-the-badge&label=CI&logo=python)  
 
 
 
