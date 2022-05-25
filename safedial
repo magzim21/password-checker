@@ -18,7 +18,7 @@ class PasswordCheck:
     """
 
     def __init__(self, password) :
-        self._password = password
+        self._password = str(password)
 
         # calculating the length
         self._length_error = len(self._password) < 8
